@@ -50,8 +50,23 @@
 ; Your goal is to write the score method.
 
 (defun score (dice)
-  ; You need to write this method
-)
+  (labels ((subscore (die count)
+             (cond
+               ((zerop count) 0)
+               ((>= count 3)
+                (+ (if (= die 1) 1000
+                       (* die 100))
+                   (subscore die (- count 3))))
+               (:else
+                (case die
+                  (1 (+ 100 (subscore die (1- count))))
+                  (5 (+ 50 (subscore die (1- count))))
+                  (otherwise 0))))))
+    (let ((counts (make-list 6 :initial-element 0)))
+      (dolist (d dice)
+        (incf (nth (1- d) counts)))
+      (loop for n from 1 upto (length counts)
+         summing (subscore n (nth (1- n) counts))))))
 
 (define-test test-score-of-an-empty-list-is-zero
     (assert-equal 0 (score nil)))
