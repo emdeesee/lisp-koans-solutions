@@ -17,8 +17,26 @@
 
 (define-condition triangle-error  (error) ())
 
+(defun pairs (l)
+  (when (or (= 1 (length l))
+            (not (null l)))
+    (concatenate 'list
+                 (loop for e in (cdr l) collecting (list (car l) e))
+                 (pairs (cdr l)))))
+
+(defun tri-ineq-p (a b c)
+  (and
+   (< a (+ b c))
+   (< b (+ a c))
+   (< c (+ a b))))
+
 (defun triangle (a b c)
-  :write-me)
+  (let ((sides (list a b c)))
+    (cond
+      ((not (tri-ineq-p a b c)) (error 'triangle-error))
+      ((= a b c) :equilateral)
+      ((some (lambda (pair) (= (first pair) (second pair))) (pairs sides)) :isosceles)
+      (:else :scalene))))
 
 
 (define-test test-equilateral-triangles-have-equal-sides
