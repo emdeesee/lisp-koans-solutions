@@ -24,7 +24,7 @@
                  (loop for e in (cdr l) collecting (list (car l) e))
                  (pairs (cdr l)))))
 
-(defun tri-ineq-p (a b c)
+(defun trianglep (a b c)
   (and
    (< a (+ b c))
    (< b (+ a c))
@@ -33,7 +33,7 @@
 (defun triangle (a b c)
   (let ((sides (list a b c)))
     (cond
-      ((not (tri-ineq-p a b c)) (error 'triangle-error))
+      ((not (trianglep a b c)) (error 'triangle-error))
       ((= a b c) :equilateral)
       ((some (lambda (pair) (= (first pair) (second pair))) (pairs sides)) :isosceles)
       (:else :scalene))))
