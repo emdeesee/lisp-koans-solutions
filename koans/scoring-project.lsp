@@ -50,18 +50,19 @@
 ; Your goal is to write the score method.
 
 (defun score (dice)
-  (labels ((subscore (die count)
+  (labels ((subscore (die count &optional (acc 0))
              (cond
-               ((zerop count) 0)
+               ((zerop count) acc)
                ((>= count 3)
-                (+ (if (= die 1) 1000
-                       (* die 100))
-                   (subscore die (- count 3))))
+                (subscore die (- count 3)
+                          (+ acc
+                             (if (= die 1) 1000
+                                 (* 100 die)))))
                (:else
                 (case die
-                  (1 (+ 100 (subscore die (1- count))))
-                  (5 (+ 50 (subscore die (1- count))))
-                  (otherwise 0))))))
+                  (1 (subscore die (1- count) (+ acc 100)))
+                  (5 (subscore die (1- count) (+ acc 50)))
+                  (otherwise acc))))))
     (let ((counts (make-list 6 :initial-element 0)))
       (dolist (d dice)
         (incf (nth (1- d) counts)))
